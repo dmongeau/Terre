@@ -56,8 +56,8 @@ var Canvas = require('./canvas');
 
 io.sockets.on('connection', function (socket) {
 	
-	socket.on('getPoints', function(bounds,cb) {
-		var points = Canvas.getPointsInBounds(bounds);
+	socket.on('getPoints', function(bounds,zoom,cb) {
+		var points = Canvas.getPointsInBounds(bounds,zoom);
 		var items = [];
 		for(var i = 0; i < points.length; i++) {
 			items.push([points[i].lat,points[i].lng,points[i].brush]);

@@ -16,17 +16,20 @@ function DrawOverlay(map,opts) {
 	//Map
 	this.map = map;
 	this.setValues({'map': map});
-	
+	this.zoom = this.map.getZoom();
 	this.bounds = this.map.getBounds();
 	google.maps.event.addListener(this.map, 'bounds_changed', function(e) {
 		self.bounds = this.getBounds();
 	});
-	/*google.maps.event.addListener(this.map, 'dragend', function(e) {
+	google.maps.event.addListener(this.map, 'zoom_changed', function(e) {
+		self.zoom = this.getZoom();
+	});
+	google.maps.event.addListener(this.map, 'dragend', function(e) {
 		window.setTimeout(function() {
 			self.draw();
 		},300);
 	});
-	google.maps.event.addListener(this.map, 'zoom_changer', function(e) {
+	/*google.maps.event.addListener(this.map, 'zoom_changer', function(e) {
 		window.setTimeout(function() {
 			self.draw();
 		},300);
@@ -129,6 +132,7 @@ DrawOverlay.prototype.draw = function() {
 	var bounds = this.map.getBounds();
 	var self = this;
 	this.getPointsInBounds(bounds,function(points) {
+		console.log('draw',points.length);
 		for(var i = 0; i < points.length; i++) {
 			self.drawPoint(points[i]);
 		}
@@ -173,24 +177,41 @@ DrawOverlay.prototype.getPointsInBounds = function(bounds,cb) {
 				'lat' : sw.lat(),
 				'lng' : sw.lng()
 			}
-		},function (cb,self) {
+		},this.zoom,function (cb,self) {
 			return function(data) {
 				var points = [];
-				for(var i = 0; i < data.length; i++) {
+				for(var key in data) {
 					var point = new DrawOverlay.Point({
-						'lat' : data[i][0],
-						'lng' : data[i][1],
-						'brush' : data[i][2]
+						'lat' : data[key][0],
+						'lng' : data[key][1],
+						'brush' : data[key][2]
 					});
 					points.push(point);
-					self.addPoint(point);
+					self.addPoint(point,false);
 				}
 				cb.call(self,points);
 			}
 		}(cb,this));
 	
 	} else {
-		cb.call(this,points);
+		
+		var zoomFactor = (this.zoom-7)/8;
+		if(zoomFactor < 0.15) zoomFactor = 0.15;
+		var precision = Math.pow(10,Math.round(zoomFactor*8));
+		
+		var keyExists = {};
+		var filteredPoints = [];
+		for(var i = 0; i < points.length; i++) {
+			var point = points[i];
+			var key = (Math.floor(point.lat*precision)/precision)+'_'+(Math.floor(point.lng*precision)/precision);
+			if(!keyExists[key]) {
+				keyExists[key] = true;
+				filteredPoints.push(points[i]);
+			}
+		}
+		keyExists = null;
+		
+		cb.call(this,filteredPoints);
 	}
 };
 

@@ -18,7 +18,7 @@ var Canvas = module.exports = {
 	},
 	
 	
-	'getPointsInBounds' : function(bounds) {
+	'getPointsInBounds' : function(bounds,zoom) {
 		
 		var mathFncNeLat = bounds.ne.lat < 0 ? Math.ceil:Math.floor;
 		var mathFncNeLng = bounds.ne.lng < 0 ? Math.ceil:Math.floor;
@@ -33,14 +33,31 @@ var Canvas = module.exports = {
 		console.log(startRow,endRow);
 		console.log(startCol,endCol);
 		
+		var zoomFactor = (zoom-7)/8;
+		if(zoomFactor < 0.2) zoomFactor = 0.2;
+		var precision = Math.pow(10,Math.round(zoomFactor*8));
+		
 		var points = [];
+		var keyExists = {};
 		for(var row = startRow; row < (endRow+1); row++) {
 			for(var col = startCol; col < (endCol+1); col++) {
 				if(typeof(Canvas.data[row]) != 'undefined' && typeof(Canvas.data[row][col]) != 'undefined') {
-					points = points.concat(Canvas.data[row][col]);
+					
+					//Filter points
+					var currentPoints = Canvas.data[row][col];
+					for(var i = 0; i < currentPoints.length; i++) {
+						var point = currentPoints[i];
+						var key = (Math.floor(point.lat*precision)/precision)+'_'+(Math.floor(point.lng*precision)/precision);
+						if(!keyExists[key]) {
+							keyExists[key] = true;
+							points.push(point);
+						}
+					}
+					
 				}
 			}
 		}
+		keyExists = null;
 		
 		return points;
 		
