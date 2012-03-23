@@ -3,7 +3,7 @@ var CONFIG = require('./config'),
 	io = require('socket.io').listen(app),
 	fs = require('fs');
 
-app.listen(CONFIG.server.port);
+app.listen(CONFIG.server.port,CONFIG.server.host);
 
 function webServer(req, res) {
 	

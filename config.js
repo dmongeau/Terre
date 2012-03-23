@@ -2,7 +2,8 @@ var CONFIG = module.exports = {
 	
 	
 	'server' : {
-		'port' : 8080
+		'host' : '184.107.167.229',
+		'port' : 80
 	}
 	
 	

@@ -29,11 +29,6 @@ function DrawOverlay(map,opts) {
 			self.draw();
 		},300);
 	});
-	/*google.maps.event.addListener(this.map, 'zoom_changer', function(e) {
-		window.setTimeout(function() {
-			self.draw();
-		},300);
-	});*/
 	
 	//Create canvas layer
 	var width = $(window).width();
