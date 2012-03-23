@@ -2,7 +2,9 @@ var CONFIG = require('./config'),
 	app = require('http').createServer(webServer),
 	io = require('socket.io').listen(app),
 	fs = require('fs');
-
+	
+io.set('log level', 1);
+	
 app.listen(CONFIG.server.port,CONFIG.server.host);
 
 function webServer(req, res) {
