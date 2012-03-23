@@ -59,7 +59,7 @@ function DrawOverlay(map,opts) {
 	}
 	
 	//Init Socket
-	this.socket = io.connect('http://localhost:8080');
+	this.socket = io.connect('http://terre.commun.ca');
 	this.socket.on('drawPoints', function (points) {
 		for(var i = 0; i < points.length; i++) {
 			self.addPointAndDraw(points[i],false);

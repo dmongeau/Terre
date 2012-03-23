@@ -30,8 +30,8 @@ var Canvas = module.exports = {
 		var startCol = bounds.ne.lng <= bounds.sw.lng ? mathFncNeLng(bounds.ne.lng):mathFncSwLng(bounds.sw.lng);
 		var endCol = bounds.ne.lng >= bounds.sw.lng ? mathFncNeLng(bounds.ne.lng):mathFncSwLng(bounds.sw.lng);
 		
-		console.log(startRow,endRow);
-		console.log(startCol,endCol);
+		//console.log(startRow,endRow);
+		//console.log(startCol,endCol);
 		
 		var zoomFactor = (zoom-7)/8;
 		if(zoomFactor < 0.2) zoomFactor = 0.2;
