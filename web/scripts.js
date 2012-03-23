@@ -12,7 +12,7 @@ $(function() {
 		zoom: currentZoom,
 		maxZoom: 15,
 		minZoom: 7,
-		mapTypeId : google.maps.MapTypeId.ROADMAP,
+		mapTypeId : google.maps.MapTypeId.SATELLITE,
 		overviewMapControl: false,
 		streetViewControl: false
 	});
