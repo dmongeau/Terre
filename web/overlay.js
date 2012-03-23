@@ -28,10 +28,10 @@ function DrawOverlay(map,opts) {
 		self.canvasContext.globalAlpha = 0.1;
 	});
 	google.maps.event.addListener(this.map, 'dragend', function(e) {
-		//window.setTimeout(function() {
+		window.setTimeout(function() {
 			self.canvasContext.globalAlpha = self.opts.opacity;
 			self.draw();
-		//},300);
+		},300);
 	});
 	
 	//Create canvas layer
