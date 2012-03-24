@@ -41,12 +41,12 @@ html.fullscreen, html.fullscreen body {
  *
  */
  
- #map {
+#map {
 	position:relative;
 	display:block;
 	width:100%;
 	height:100%; 
- }
+}
  
 #map .overlay {
 	position:absolute;
@@ -59,4 +59,61 @@ html.fullscreen, html.fullscreen body {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none; 
- }
+	cursor:default;
+}
+
+#map .drawing {
+	cursor:move;
+}
+ 
+ 
+#controls {
+	 margin-top:10px;
+	 margin-left:10px;
+}
+ 
+#controls ul li {
+	 display:block;
+	 width:48px;
+	 height:46px;
+	 background:url(img/btn.png) no-repeat top left;
+	 margin-bottom:5px;
+}
+
+#controls ul li.down {
+	 background:url(img/btn_down.png) no-repeat top left;
+}
+
+#controls ul li a {
+	 display:block;
+	 width:48px;
+	 height:46px;
+}
+
+#controls ul li.drag img {
+	display:block;
+	width:38px;
+	height:37px;
+	position:relative;
+	top:5px;
+	left:5px;
+}
+
+#controls ul li.flower img {
+	display:block;
+	width:34px;
+	height:32px;
+	position:relative;
+	top:8px;
+	left:7px;
+}
+
+#controls ul li img.down {
+	 display:none;
+}
+#controls ul li.down img.down {
+	 display:block;
+}
+#controls ul li.down img.normal {
+	 display:none;
+}

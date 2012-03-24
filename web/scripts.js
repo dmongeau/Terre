@@ -10,70 +10,35 @@ $(function() {
 	var map = new google.maps.Map(document.getElementById("map"), {
 		center: new google.maps.LatLng(45.5,-73.6),
 		zoom: currentZoom,
-		maxZoom: 15,
-		minZoom: 7,
+		maxZoom: currentZoom,
+		minZoom: currentZoom,
 		mapTypeId : google.maps.MapTypeId.SATELLITE,
 		overviewMapControl: false,
-		streetViewControl: false
+		streetViewControl: false,
+		zoomControl : false,
+		rotateControl : false,
+		panControl : false,
 	});
   
 	var overlay = new DrawOverlay(map,{
 		'brushes' : {
 			'flower' : [
-				'flowers/1.png',
-				'flowers/2.png',
-				'flowers/3.png',
-				'flowers/4.png',
-				'flowers/5.png',
-				'flowers/6.png',
-				'flowers/7.png',
-				'flowers/8.png',
-				'flowers/9.png',
-				'flowers/10.png',
-				'flowers/11.png',
-				'flowers/12.png'
+				'flowers/1.gif',
+				'flowers/2.gif',
+				'flowers/3.gif',
+				'flowers/4.gif',
+				'flowers/5.gif',
+				'flowers/6.gif',
+				'flowers/7.gif',
+				'flowers/8.gif',
+				'flowers/9.gif',
+				'flowers/10.gif',
+				'flowers/11.gif',
+				'flowers/12.gif'
 			]
 		}
 	}); 
 	
-	var mouseIsDown = false;
-	
-	var drawTimer;
-	function drawFlower(latLng) {
-		
-		if(!drawTimer) {
-		
-			drawTimer = window.setTimeout(function(latLng) {
-				return function() {
-					overlay.addPointAndDraw({
-						'latLng' : latLng,
-						'brush' : 'flower'
-					});
-					drawTimer = null;
-				}
-			}(latLng),75);
-			
-		}
-	}
-	
-	
-	google.maps.event.addListener(map, 'mousedown', function(e) {
-		mouseIsDown = true;
-	});
-	google.maps.event.addListener(map, 'mouseup', function(e) {
-		mouseIsDown = false;
-	});
-	
-	google.maps.event.addListener(map, 'mousemove', function(e) {
-		
-		drawFlower(e.latLng);
-		
-	});
-	google.maps.event.addListener(map, 'mouseover', function(e) {
-		
-		drawFlower(e.latLng);
-		
-	});
 	
 	
 	

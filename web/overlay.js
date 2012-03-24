@@ -6,7 +6,7 @@ function DrawOverlay(map,opts) {
 	this.opts = jQuery.extend({
 		'brushSize' : 40,
 		'brushes' : {},
-		'opacity' : 0.7,
+		'opacity' : 1,
 		'precision' : 7
 	},opts);
 	
@@ -18,27 +18,69 @@ function DrawOverlay(map,opts) {
 	this.setValues({'map': map});
 	this.zoom = this.map.getZoom();
 	this.bounds = this.map.getBounds();
-	google.maps.event.addListener(this.map, 'bounds_changed', function(e) {
-		self.bounds = this.getBounds();
-	});
-	google.maps.event.addListener(this.map, 'zoom_changed', function(e) {
-		self.zoom = this.getZoom();
-	});
-	google.maps.event.addListener(this.map, 'dragstart', function(e) {
-		self.canvasContext.globalAlpha = 0.1;
-	});
-	google.maps.event.addListener(this.map, 'dragend', function(e) {
-		window.setTimeout(function() {
-			self.canvasContext.globalAlpha = self.opts.opacity;
-			self.draw();
-		},300);
-	});
+	this.drawing = false;
+	
+	//Create controls
+	this.initControls();
 	
 	//Create canvas layer
+	this.initCanvas();
+	
+	//Preload brushes
+	this.initBrushes();
+	
+	//Events
+	this.initEvents();
+	
+	//Init Socket
+	this.initSocket();
+	
+};  
+  
+DrawOverlay.prototype = new google.maps.OverlayView; 
+
+DrawOverlay.prototype.initControls = function() {
+	
+	var self = this;
+	
+	this.controls = $('#controls').clone();
+	$('#controls').remove();
+	
+	this.controls.find('li.drag a, li.flower a').click(function(self) {
+		
+		return function(e) {
+			e.preventDefault();
+			var $li = $(this).parents('li');
+			if(!$li.is('.down')) {
+				$('#controls li.down').removeClass('down');
+				$li.addClass('down');
+				if($li.is('.flower')) {
+					self.drawing = true;
+					self.map.setOptions({'draggable':false});
+					self.markerLayer.removeClass('drawing');
+				} else {
+					self.drawing = false;
+					self.map.setOptions({'draggable':true});
+					self.markerLayer.addClass('drawing');
+				}
+			}
+		}
+		
+	}(this));
+	
+	this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(this.controls.get(0));
+	
+};
+
+DrawOverlay.prototype.initCanvas = function() {
+	
+	var self = this;
+	
 	var width = $(window).width();
 	var height = $(window).height();
 	this.markerLayer = $('<div><canvas width="'+width+'" height="'+height+'"></canvas></div>');  
 	this.markerLayer.addClass('overlay');
+	this.markerLayer.addClass('drawing');
 	this.markerLayer.css({
 		'width' : '100%',
 		'height' : '100%'
@@ -47,7 +89,12 @@ function DrawOverlay(map,opts) {
 	this.canvasContext = this.canvas.getContext('2d');
 	this.canvasContext.globalAlpha = this.opts.opacity;
 	
-	//Preload brushes
+};
+
+DrawOverlay.prototype.initBrushes = function() {
+	
+	var self = this;
+	
 	this.brushes = {};
 	for(var key in this.opts.brushes) {
 		var brushes = this.opts.brushes[key] instanceof Array ? this.opts.brushes[key]:[this.opts.brushes[key]];
@@ -62,17 +109,72 @@ function DrawOverlay(map,opts) {
 		}
 	}
 	
-	//Init Socket
-	this.socket = io.connect('http://terre.commun.ca');
-	this.socket.on('drawPoints', function (points) {
-		for(var i = 0; i < points.length; i++) {
-			self.addPointAndDraw(points[i],false);
+};
+
+DrawOverlay.prototype.initEvents = function() {
+	
+	var self = this;
+	
+	google.maps.event.addListener(this.map, 'bounds_changed', function(e) {
+		self.bounds = this.getBounds();
+	});
+	google.maps.event.addListener(this.map, 'zoom_changed', function(e) {
+		self.zoom = this.getZoom();
+	});
+	google.maps.event.addListener(this.map, 'dragstart', function(e) {
+		$(self.canvas).css('opacity', 0.3);
+	});
+	google.maps.event.addListener(this.map, 'dragend', function(e) {
+		if(!self.drawing) {
+			window.setTimeout(function() {
+				$(self.canvas).css('opacity', 1);
+				self.draw();
+			},300);
 		}
 	});
 	
-};  
-  
-DrawOverlay.prototype = new google.maps.OverlayView; 
+	var mouseIsDown = false;
+	var drawTimer;
+	function drawFlower(latLng) {
+		if(!self.drawing || !mouseIsDown) return;
+		if(!drawTimer) {
+			drawTimer = window.setTimeout(function(latLng) {
+				return function() {
+					self.addPointAndDraw({
+						'latLng' : latLng,
+						'brush' : 'flower'
+					});
+					drawTimer = null;
+				}
+			}(latLng),75);
+		}
+	}
+	google.maps.event.addListener(this.map, 'mousedown', function(e) {
+		mouseIsDown = true;
+	});
+	google.maps.event.addListener(this.map, 'mouseup', function(e) {
+		mouseIsDown = false;
+	});
+	google.maps.event.addListener(this.map, 'mousemove', function(e) {
+		drawFlower(e.latLng);
+	});
+	google.maps.event.addListener(this.map, 'mouseover', function(e) {
+		drawFlower(e.latLng);
+	});
+};
+
+DrawOverlay.prototype.initSocket = function() {
+	
+	this.socket = io.connect('http://terre.commun.ca');
+	this.socket.on('drawPoints', function(self) {
+		return function (points) {
+			for(var i = 0; i < points.length; i++) {
+				self.addPointAndDraw(points[i],false);
+			}
+		}
+	}(this));
+	
+};
 
 DrawOverlay.prototype.onAdd = function() {  
 
@@ -106,7 +208,9 @@ DrawOverlay.prototype.onAdd = function() {
 	this.markerLayer.bind('touchend',function(e) {
 		e.type = 'mouseover';
 		eventHandler(e);
-		self.draw();
+		if(!self.drawing) {
+			self.draw();
+		}
 	});
 	
 	$pane.append( '<div class="placeholder"></div>' );

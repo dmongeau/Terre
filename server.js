@@ -1,10 +1,17 @@
-var CONFIG = require('./config'),
-	app = require('http').createServer(webServer),
+var app = require('http').createServer(webServer),
 	io = require('socket.io').listen(app),
-	fs = require('fs');
-	
-io.set('log level', 1);
-	
+	fs = require('fs'),
+	os = require('os');
+
+
+if(os.type() == 'Darwin') {
+	var CONFIG = require('./config').dev;
+} else {
+	var CONFIG = require('./config').prod;
+}
+
+
+io.set('log level', CONFIG.log.level);
 app.listen(CONFIG.server.port,CONFIG.server.host);
 
 function webServer(req, res) {
@@ -44,8 +51,11 @@ function webServer(req, res) {
 		
 		default:
 			var flowersMatch = url.match(/^\/?flowers\/([0-9a-z]+)\.(gif|jpg|png)/i);
+			var imgMatch = url.match(/^\/?img\/([0-9a-z\_]+)\.(gif|jpg|png)/i);
 			if(flowersMatch) {
 				displayPage('flowers/'+flowersMatch[1]+'.'+flowersMatch[2]);
+			} else if(imgMatch) {
+				displayPage('img/'+imgMatch[1]+'.'+imgMatch[2]);
 			} else {
 				res.writeHead(500);
 				res.end('nothing');
