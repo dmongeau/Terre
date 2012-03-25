@@ -165,9 +165,10 @@ DrawOverlay.prototype.initEvents = function() {
 
 DrawOverlay.prototype.initSocket = function() {
 	
-	this.socket = io.connect('http://terre.commun.ca');
+	this.socket = io.connect('http://localhost:8080');
 	this.socket.on('drawPoints', function(self) {
 		return function (points) {
+			//console.log('a');
 			for(var i = 0; i < points.length; i++) {
 				self.addPointAndDraw(points[i],false);
 			}
@@ -224,7 +225,7 @@ DrawOverlay.prototype.onRemove = function() {
 
 DrawOverlay.prototype.draw = function() {
 	
-	console.log('draw');
+	//console.log('draw');
 	
 	//Clear canvas
 	var width = $(this.canvas).width();
@@ -235,7 +236,7 @@ DrawOverlay.prototype.draw = function() {
 	var bounds = this.map.getBounds();
 	var self = this;
 	this.getPointsInBounds(bounds,function(points) {
-		console.log('draw',points.length);
+		//console.log('draw',points.length);
 		for(var i = 0; i < points.length; i++) {
 			self.drawPoint(points[i]);
 		}

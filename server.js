@@ -77,9 +77,11 @@ io.sockets.on('connection', function (socket) {
 		cb(items);
 	});
 	socket.on('addPoints', function (points) {
+		
 		for(var i = 0; i < points.length; i++) {
 			var point = points[i];
 			Canvas.addPoint(new Canvas.point(point.lat,point.lng,point.brush));
 		}
+		socket.broadcast.emit('drawPoints',points);
 	});
 });
