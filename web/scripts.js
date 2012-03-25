@@ -23,18 +23,18 @@ $(function() {
 	var overlay = new DrawOverlay(map,{
 		'brushes' : {
 			'flower' : [
-				'flowers/1.gif',
-				'flowers/2.gif',
-				'flowers/3.gif',
-				'flowers/4.gif',
-				'flowers/5.gif',
-				'flowers/6.gif',
-				'flowers/7.gif',
-				'flowers/8.gif',
-				'flowers/9.gif',
-				'flowers/10.gif',
-				'flowers/11.gif',
-				'flowers/12.gif'
+				'flowers/1.png',
+				'flowers/2.png',
+				'flowers/3.png',
+				'flowers/4.png',
+				'flowers/5.png',
+				'flowers/6.png',
+				'flowers/7.png',
+				'flowers/8.png',
+				'flowers/9.png',
+				'flowers/10.png',
+				'flowers/11.png',
+				'flowers/12.png'
 			]
 		}
 	}); 
