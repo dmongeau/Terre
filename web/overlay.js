@@ -165,7 +165,7 @@ DrawOverlay.prototype.initEvents = function() {
 
 DrawOverlay.prototype.initSocket = function() {
 	
-	this.socket = io.connect('http://localhost:8080');
+	this.socket = io.connect('http://terre.commun.ca');
 	this.socket.on('drawPoints', function(self) {
 		return function (points) {
 			//console.log('a');
