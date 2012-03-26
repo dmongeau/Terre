@@ -69,8 +69,8 @@ html.fullscreen, html.fullscreen body {
 
 #like {
 	position:fixed;
-	bottom:0px;
-	left:100px;
+	bottom:30px;
+	left:5px;
 	z-index:2;
 }
  
