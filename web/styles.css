@@ -59,7 +59,7 @@ html.fullscreen, html.fullscreen body {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none; 
-	cursor:default;
+	cursor:pointer !important;
 }
 
 #map .drawing {
