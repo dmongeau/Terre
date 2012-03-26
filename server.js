@@ -43,6 +43,10 @@ function webServer(req, res) {
 		case '/overlay.js':
 			displayPage('overlay.js');
 		break;
+		
+		case '/thumb.png':
+			displayPage('thumb.png');
+		break;
 	
 		case '/index.html':
 		case '/':
